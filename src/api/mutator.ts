@@ -62,23 +62,29 @@ export const customInstance = async <T = unknown>({
   // Determine content type from response header
   const contentType = response.headers.get('content-type') || '';
 
-  // Parse response based on responseType or content-type
-  if (responseType === 'text' || contentType.includes('text/plain')) {
-    return (await response.text()) as T;
-  }
-
+  // Handle blob responses
   if (responseType === 'blob' || contentType.includes('application/octet-stream')) {
     return (await response.blob()) as T;
   }
 
-  // Try to parse as JSON (Pokemon API returns JSON)
+  // Pokemon API always returns JSON, even if content-type says text/plain
+  // Try to parse as JSON first
   try {
-    return (await response.json()) as T;
+    const text = await response.text();
+    // If response is empty, return empty object
+    if (!text.trim()) {
+      return {} as T;
+    }
+    return JSON.parse(text) as T;
   } catch {
-    // Fallback to text if JSON parsing fails
-    return (await response.text()) as T;
+    // If JSON parsing fails and responseType is explicitly 'text', return as text
+    if (responseType === 'text') {
+      return (await response.text()) as T;
+    }
+    // Otherwise, try to get text again (shouldn't happen for Pokemon API)
+    const text = await response.text();
+    return text as T;
   }
 };
 
 export default customInstance;
-

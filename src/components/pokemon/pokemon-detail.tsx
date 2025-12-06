@@ -1,7 +1,7 @@
 'use client';
 
-import { usePokemonRead } from '@/api/generated';
-import type { Pokemon, PokemonType, PokemonAbility, PokemonStat } from '../../../api/models/Pokemon';
+import { usePokemon } from '@/api/hooks';
+import type { PokemonType, PokemonAbility, PokemonStat } from '../../../api/models/Pokemon';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,17 +15,7 @@ interface PokemonDetailProps {
  * Component for displaying detailed Pokemon information
  */
 export function PokemonDetail({ pokemonId }: PokemonDetailProps) {
-  const { data, isLoading, error } = usePokemonRead(pokemonId, {
-    query: {
-      select: (data) => {
-        // Parse JSON string if needed
-        if (typeof data === 'string') {
-          return JSON.parse(data) as Pokemon;
-        }
-        return data as Pokemon;
-      },
-    },
-  });
+  const { data: pokemon, isLoading, error } = usePokemon(pokemonId);
 
   if (error) {
     const errorMessage = typeof error === 'string' ? error : (error as Error)?.message || 'Unknown error';
@@ -38,8 +28,6 @@ export function PokemonDetail({ pokemonId }: PokemonDetailProps) {
       </Card>
     );
   }
-
-  const pokemon = data as Pokemon | undefined;
 
   if (isLoading) {
     return (

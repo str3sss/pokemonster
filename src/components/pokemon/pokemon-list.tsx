@@ -1,7 +1,6 @@
 'use client';
 
-import { usePokemonList } from '@/api/generated';
-import type { NamedAPIResourceList } from '../../../api/models/Common';
+import { usePokemonListParsed } from '@/api/hooks';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -24,20 +23,7 @@ export function PokemonList({ onPokemonSelect }: PokemonListProps) {
   const [offset, setOffset] = useState(0);
   const limit = 20;
 
-  const { data, isLoading, error } = usePokemonList(
-    { limit, offset },
-    {
-      query: {
-        select: (data) => {
-          // Parse JSON string if needed
-          if (typeof data === 'string') {
-            return JSON.parse(data) as NamedAPIResourceList;
-          }
-          return data as NamedAPIResourceList;
-        },
-      },
-    }
-  );
+  const { data: pokemonData, isLoading, error } = usePokemonListParsed({ limit, offset });
 
   if (error) {
     const errorMessage = typeof error === 'string' ? error : error?.message || 'Unknown error';
@@ -53,7 +39,6 @@ export function PokemonList({ onPokemonSelect }: PokemonListProps) {
     );
   }
 
-  const pokemonData = data as NamedAPIResourceList | undefined;
 
   return (
     <div className="space-y-4">

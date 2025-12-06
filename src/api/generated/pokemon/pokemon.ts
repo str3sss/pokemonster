@@ -3,9 +3,7 @@
  * Do not edit manually.
  * OpenAPI spec version: 20220523
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -15,189 +13,148 @@ import type {
   QueryKey,
   UndefinedInitialDataOptions,
   UseQueryOptions,
-  UseQueryResult
+  UseQueryResult,
 } from '@tanstack/react-query';
 
-import type {
-  PokemonListParams
-} from '../../../../api/generated';
+import type { PokemonListParams } from '../../../../api/generated';
 
 import { customInstance } from '../../mutator';
 import type { ErrorType } from '../../mutator';
 
+export const pokemonList = (params?: PokemonListParams, signal?: AbortSignal) => {
+  return customInstance<string>({ url: `/api/v2/pokemon/`, method: 'GET', params, signal });
+};
 
+export const getPokemonListQueryKey = (params?: PokemonListParams) => {
+  return [`/api/v2/pokemon/`, ...(params ? [params] : [])] as const;
+};
 
-
-export const pokemonList = (
-    params?: PokemonListParams,
- signal?: AbortSignal
+export const getPokemonListQueryOptions = <TData = Awaited<ReturnType<typeof pokemonList>>, TError = ErrorType<string>>(
+  params?: PokemonListParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>> }
 ) => {
-      
-      
-      return customInstance<string>(
-      {url: `/api/v2/pokemon/`, method: 'GET',
-        params, signal
-    },
-      );
-    }
-  
+  const { query: queryOptions } = options ?? {};
 
+  const queryKey = queryOptions?.queryKey ?? getPokemonListQueryKey(params);
 
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof pokemonList>>> = ({ signal }) => pokemonList(params, signal);
 
-export const getPokemonListQueryKey = (params?: PokemonListParams,) => {
-    return [
-    `/api/v2/pokemon/`, ...(params ? [params]: [])
-    ] as const;
-    }
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
 
-    
-export const getPokemonListQueryOptions = <TData = Awaited<ReturnType<typeof pokemonList>>, TError = ErrorType<string>>(params?: PokemonListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getPokemonListQueryKey(params);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof pokemonList>>> = ({ signal }) => pokemonList(params, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type PokemonListQueryResult = NonNullable<Awaited<ReturnType<typeof pokemonList>>>
-export type PokemonListQueryError = ErrorType<string>
-
+export type PokemonListQueryResult = NonNullable<Awaited<ReturnType<typeof pokemonList>>>;
+export type PokemonListQueryError = ErrorType<string>;
 
 export function usePokemonList<TData = Awaited<ReturnType<typeof pokemonList>>, TError = ErrorType<string>>(
- params: undefined |  PokemonListParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof pokemonList>>,
-          TError,
-          Awaited<ReturnType<typeof pokemonList>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  params: undefined | PokemonListParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<Awaited<ReturnType<typeof pokemonList>>, TError, Awaited<ReturnType<typeof pokemonList>>>,
+        'initialData'
+      >;
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function usePokemonList<TData = Awaited<ReturnType<typeof pokemonList>>, TError = ErrorType<string>>(
- params?: PokemonListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof pokemonList>>,
-          TError,
-          Awaited<ReturnType<typeof pokemonList>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  params?: PokemonListParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<Awaited<ReturnType<typeof pokemonList>>, TError, Awaited<ReturnType<typeof pokemonList>>>,
+        'initialData'
+      >;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function usePokemonList<TData = Awaited<ReturnType<typeof pokemonList>>, TError = ErrorType<string>>(
- params?: PokemonListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  params?: PokemonListParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>> },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
 export function usePokemonList<TData = Awaited<ReturnType<typeof pokemonList>>, TError = ErrorType<string>>(
- params?: PokemonListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  params?: PokemonListParams,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonList>>, TError, TData>> },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getPokemonListQueryOptions(params, options);
 
-  const queryOptions = getPokemonListQueryOptions(params,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
 
+export const pokemonRead = (id: number, signal?: AbortSignal) => {
+  return customInstance<string>({ url: `/api/v2/pokemon/${id}/`, method: 'GET', signal });
+};
 
+export const getPokemonReadQueryKey = (id?: number) => {
+  return [`/api/v2/pokemon/${id}/`] as const;
+};
 
-
-export const pokemonRead = (
-    id: number,
- signal?: AbortSignal
+export const getPokemonReadQueryOptions = <TData = Awaited<ReturnType<typeof pokemonRead>>, TError = ErrorType<string>>(
+  id: number,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>> }
 ) => {
-      
-      
-      return customInstance<string>(
-      {url: `/api/v2/pokemon/${id}/`, method: 'GET', signal
-    },
-      );
-    }
-  
+  const { query: queryOptions } = options ?? {};
 
+  const queryKey = queryOptions?.queryKey ?? getPokemonReadQueryKey(id);
 
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof pokemonRead>>> = ({ signal }) => pokemonRead(id, signal);
 
-export const getPokemonReadQueryKey = (id?: number,) => {
-    return [
-    `/api/v2/pokemon/${id}/`
-    ] as const;
-    }
+  return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof pokemonRead>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    
-export const getPokemonReadQueryOptions = <TData = Awaited<ReturnType<typeof pokemonRead>>, TError = ErrorType<string>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getPokemonReadQueryKey(id);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof pokemonRead>>> = ({ signal }) => pokemonRead(id, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type PokemonReadQueryResult = NonNullable<Awaited<ReturnType<typeof pokemonRead>>>
-export type PokemonReadQueryError = ErrorType<string>
-
+export type PokemonReadQueryResult = NonNullable<Awaited<ReturnType<typeof pokemonRead>>>;
+export type PokemonReadQueryError = ErrorType<string>;
 
 export function usePokemonRead<TData = Awaited<ReturnType<typeof pokemonRead>>, TError = ErrorType<string>>(
- id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof pokemonRead>>,
-          TError,
-          Awaited<ReturnType<typeof pokemonRead>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  id: number,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, Awaited<ReturnType<typeof pokemonRead>>>,
+        'initialData'
+      >;
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function usePokemonRead<TData = Awaited<ReturnType<typeof pokemonRead>>, TError = ErrorType<string>>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof pokemonRead>>,
-          TError,
-          Awaited<ReturnType<typeof pokemonRead>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  id: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>> &
+      Pick<
+        UndefinedInitialDataOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, Awaited<ReturnType<typeof pokemonRead>>>,
+        'initialData'
+      >;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function usePokemonRead<TData = Awaited<ReturnType<typeof pokemonRead>>, TError = ErrorType<string>>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  id: number,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>> },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
 export function usePokemonRead<TData = Awaited<ReturnType<typeof pokemonRead>>, TError = ErrorType<string>>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  id: number,
+  options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof pokemonRead>>, TError, TData>> },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getPokemonReadQueryOptions(id, options);
 
-  const queryOptions = getPokemonReadQueryOptions(id,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
-
-
-
-
