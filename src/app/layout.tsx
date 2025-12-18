@@ -1,21 +1,23 @@
-import { Figtree, Geist, Geist_Mono } from 'next/font/google';
-
-import { QueryProvider } from '@/components/providers/query-provider';
+import { Archivo_Black, Space_Grotesk } from 'next/font/google';
 
 import './globals.css';
 
+import { QueryProvider } from '@/components/providers/query-provider';
+
 import type { Metadata } from 'next';
 
-const figtree = Figtree({ subsets: ['latin'], variable: '--font-sans' });
-
-const geistSans = Geist({
+const archivoBlack = Archivo_Black({
+  display: 'swap',
   subsets: ['latin'],
-  variable: '--font-geist-sans',
+  variable: '--font-head',
+  weight: '400',
 });
 
-const geistMono = Geist_Mono({
+const space = Space_Grotesk({
+  display: 'swap',
   subsets: ['latin'],
-  variable: '--font-geist-mono',
+  variable: '--font-sans',
+  weight: '400',
 });
 
 export const metadata: Metadata = {
@@ -29,8 +31,8 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html className={figtree.variable} lang='en'>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang='en'>
+      <body className={`${archivoBlack.variable} ${space.variable}`}>
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
