@@ -1,21 +1,34 @@
 import { defineConfig } from 'orval';
 
+/**
+ * Конфигурация для генерации API клиентов из OpenAPI спецификации
+ *
+ * Решение проблемы дублирования схем:
+ * - Используем режим tags-split для разбиения endpoints по тегам
+ * - Общие схемы остаются в корне (они используются несколькими тегами)
+ * - Специфичные схемы для каждого тега будут в папках тегов
+ */
 export default defineConfig({
   pokemon: {
+    hooks: {},
     input: {
-      target: './services/openapi.yml',
-      filters: {
-        mode: 'exclude',
-        tags: ['evolution', 'berries', 'items', 'machines', 'location', 'contest', 'moves', 'encounters', 'games'],
-      },
+      target: 'src/services/openapi.yml',
     },
     output: {
-      httpClient: 'fetch',
-      mode: 'tags-split',
-      // mock: true,
-      target: 'src/services/generated/target',
-      schemas: 'src/shared/generated/schemas',
       client: 'react-query',
+      docs: true,
+      httpClient: 'fetch',
+      indexFiles: false,
+      mode: 'tags',
+      namingConvention: 'kebab-case',
+      override: {
+        useTypeOverInterfaces: false,
+      },
+      prettier: true,
+      // Общие схемы в корне - они используются несколькими тегами
+      // Это нормально, так как избегаем дублирования
+      schemas: 'src/services/generated/schemas',
+      target: 'src/services/generated/',
     },
   },
 });

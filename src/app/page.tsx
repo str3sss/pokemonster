@@ -1,5 +1,7 @@
-import { ComponentExample } from "@/components/component-example";
+import { ComponentExample } from '@/components/component-example';
 
-export default function Page() {
-return <ComponentExample />;
-}
+const Page = () => {
+  return <ComponentExample />;
+};
+
+export default Page;
