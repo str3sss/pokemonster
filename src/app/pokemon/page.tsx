@@ -12,7 +12,7 @@ import { Card } from '@/components/retroui/card';
 import { Input } from '@/components/retroui/input';
 import { Loader } from '@/components/retroui/loader';
 import { Text } from '@/components/retroui/text';
-import { useApiV2PokemonList } from '@/services/generated/pokemon';
+import { usePokemonListGraphQL } from '@/services/graphql/hooks';
 
 const POKEMON_PER_PAGE = 24;
 
@@ -24,18 +24,11 @@ const PokemonListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [offset, setOffset] = useState(0);
 
-  // Load all pokemon once for client-side search
-  const {
-    data: allPokemonData,
-    isError,
-    isLoading,
-  } = useApiV2PokemonList({
-    limit: 100_000,
-    offset: 0,
-  });
+  // Load all pokemon once for client-side search using GraphQL
+  const { data: allPokemonData, isError, isLoading } = usePokemonListGraphQL(100_000, 0);
 
-  const allPokemonList = allPokemonData?.data?.results || [];
-  const totalCount = allPokemonData?.data?.count || 0;
+  const allPokemonList = allPokemonData?.pokemon || [];
+  const totalCount = allPokemonData?.pokemon_aggregate?.aggregate?.count || 0;
 
   /**
    * Filters pokemon by search query (client-side lazy search)
@@ -57,11 +50,10 @@ const PokemonListPage = () => {
   const hasPrevious = offset > 0;
 
   /**
-   * Extracts Pokemon ID from URL
+   * Gets Pokemon ID (already available in GraphQL response)
    */
-  const getPokemonId = (url: string): string => {
-    const matches = url.match(/\/(\d+)\//);
-    return matches ? matches[1] : '';
+  const getPokemonId = (pokemon: { id: number; name: string }): string => {
+    return String(pokemon.id);
   };
 
   /**
@@ -171,7 +163,7 @@ const PokemonListPage = () => {
                 {/* Pokemon Grid */}
                 <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'>
                   {filteredPokemon.map((pokemon) => {
-                    const pokemonId = getPokemonId(pokemon.url);
+                    const pokemonId = getPokemonId(pokemon);
                     const imageUrl = getPokemonImageUrl(pokemonId);
 
                     return (
