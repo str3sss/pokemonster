@@ -4,8 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-import { Alert } from '@/components/retroui/alert';
 import { Carousel } from '@/components/retroui';
+import { Alert } from '@/components/retroui/alert';
 import { Badge } from '@/components/retroui/badge';
 import { Button } from '@/components/retroui/button';
 import { Card } from '@/components/retroui/card';
@@ -33,7 +33,7 @@ const PokemonDetailPage = () => {
   const params = useParams();
   const id = params.id as string;
 
-  const { data, isLoading, isError } = useApiV2PokemonRetrieve(id);
+  const { data, isError, isLoading } = useApiV2PokemonRetrieve(id);
   const pokemon = data?.data;
 
   /**
@@ -80,24 +80,24 @@ const PokemonDetailPage = () => {
    */
   const getTypeColor = (typeName: string): string => {
     const typeColors: Record<string, string> = {
-      normal: 'bg-gray-300 text-gray-800',
-      fire: 'bg-red-400 text-red-900',
-      water: 'bg-blue-400 text-blue-900',
-      electric: 'bg-yellow-400 text-yellow-900',
-      grass: 'bg-green-400 text-green-900',
-      ice: 'bg-cyan-300 text-cyan-900',
-      fighting: 'bg-orange-600 text-orange-100',
-      poison: 'bg-purple-400 text-purple-900',
-      ground: 'bg-amber-600 text-amber-100',
-      flying: 'bg-indigo-300 text-indigo-900',
-      psychic: 'bg-pink-400 text-pink-900',
       bug: 'bg-lime-400 text-lime-900',
-      rock: 'bg-stone-500 text-stone-100',
-      ghost: 'bg-violet-500 text-violet-100',
-      dragon: 'bg-indigo-600 text-indigo-100',
       dark: 'bg-gray-700 text-gray-100',
-      steel: 'bg-slate-400 text-slate-900',
+      dragon: 'bg-indigo-600 text-indigo-100',
+      electric: 'bg-yellow-400 text-yellow-900',
       fairy: 'bg-rose-300 text-rose-900',
+      fighting: 'bg-orange-600 text-orange-100',
+      fire: 'bg-red-400 text-red-900',
+      flying: 'bg-indigo-300 text-indigo-900',
+      ghost: 'bg-violet-500 text-violet-100',
+      grass: 'bg-green-400 text-green-900',
+      ground: 'bg-amber-600 text-amber-100',
+      ice: 'bg-cyan-300 text-cyan-900',
+      normal: 'bg-gray-300 text-gray-800',
+      poison: 'bg-purple-400 text-purple-900',
+      psychic: 'bg-pink-400 text-pink-900',
+      rock: 'bg-stone-500 text-stone-100',
+      steel: 'bg-slate-400 text-slate-900',
+      water: 'bg-blue-400 text-blue-900',
     };
     return typeColors[typeName.toLowerCase()] || 'bg-gray-200 text-gray-800';
   };
@@ -107,7 +107,7 @@ const PokemonDetailPage = () => {
    */
   const formatStatName = (name: string): string => {
     return name
-      .replace(/-/g, ' ')
+      .replaceAll('-', ' ')
       .split(' ')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
@@ -137,7 +137,7 @@ const PokemonDetailPage = () => {
       'back_shiny_female',
     ];
 
-    spriteKeys.forEach((key) => {
+    for (const key of spriteKeys) {
       if (
         key in pokemon.sprites &&
         pokemon.sprites[key] &&
@@ -145,7 +145,7 @@ const PokemonDetailPage = () => {
       ) {
         sprites.push({ key, url: pokemon.sprites[key] as string });
       }
-    });
+    }
 
     return sprites;
   };
@@ -155,7 +155,7 @@ const PokemonDetailPage = () => {
    */
   const formatSpriteKey = (key: string): string => {
     return key
-      .replace(/_/g, ' ')
+      .replaceAll('_', ' ')
       .split(' ')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
@@ -165,24 +165,24 @@ const PokemonDetailPage = () => {
    * Formats ability name for display
    */
   const formatAbilityName = (name: string): string => {
-    return name.replace(/-/g, ' ');
+    return name.replaceAll('-', ' ');
   };
 
   /**
    * Gets English flavor text
    */
-  const getEnglishFlavorText = (): string | null => {
+  const getEnglishFlavorText = (): null | string => {
     if (!speciesData?.data?.flavor_text_entries) return null;
     const englishEntry = speciesData.data.flavor_text_entries.find(
       (entry) => entry.language.name === 'en',
     );
-    return englishEntry?.flavor_text.replace(/\f/g, ' ') || null;
+    return englishEntry?.flavor_text.replaceAll('\f', ' ') || null;
   };
 
   /**
    * Gets English genus
    */
-  const getEnglishGenus = (): string | null => {
+  const getEnglishGenus = (): null | string => {
     if (!speciesData?.data?.genera) return null;
     const englishGenus = speciesData.data.genera.find((genus) => genus.language.name === 'en');
     return englishGenus?.genus || null;
@@ -323,17 +323,17 @@ const PokemonDetailPage = () => {
                 speciesData?.data?.is_baby) && (
                 <div className='mt-4 flex flex-wrap gap-2'>
                   {speciesData.data.is_legendary && (
-                    <Badge variant='surface' size='lg'>
+                    <Badge size='lg' variant='surface'>
                       Легендарный
                     </Badge>
                   )}
                   {speciesData.data.is_mythical && (
-                    <Badge variant='surface' size='lg'>
+                    <Badge size='lg' variant='surface'>
                       Мифический
                     </Badge>
                   )}
                   {speciesData.data.is_baby && (
-                    <Badge variant='surface' size='lg'>
+                    <Badge size='lg' variant='surface'>
                       Детёныш
                     </Badge>
                   )}
@@ -374,8 +374,8 @@ const PokemonDetailPage = () => {
                 <Carousel.Content>
                   {allSprites.map((sprite) => (
                     <Carousel.Item
-                      key={sprite.key}
                       className='basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4'
+                      key={sprite.key}
                     >
                       <div className='flex flex-col items-center gap-2 p-2'>
                         <div className='rounded border-2 bg-white p-2'>
@@ -444,7 +444,7 @@ const PokemonDetailPage = () => {
                             {formatAbilityName(ability.ability.name)}
                           </Text>
                           {ability.is_hidden && (
-                            <Badge variant='surface' size='sm'>
+                            <Badge size='sm' variant='surface'>
                               Скрытая
                             </Badge>
                           )}
@@ -472,11 +472,11 @@ const PokemonDetailPage = () => {
                       return (
                         <Table.Row key={move.move.name}>
                           <Table.Cell className='capitalize'>
-                            {move.move.name.replace(/-/g, ' ')}
+                            {move.move.name.replaceAll('-', ' ')}
                           </Table.Cell>
                           <Table.Cell>{versionDetail?.level_learned_at ?? '-'}</Table.Cell>
                           <Table.Cell className='capitalize'>
-                            {versionDetail?.move_learn_method?.name.replace(/-/g, ' ') ?? '-'}
+                            {versionDetail?.move_learn_method?.name.replaceAll('-', ' ') ?? '-'}
                           </Table.Cell>
                         </Table.Row>
                       );
@@ -503,7 +503,7 @@ const PokemonDetailPage = () => {
                     <div className='flex flex-wrap gap-2'>
                       {pokemon.forms.map((form) => (
                         <Badge key={form.name} variant='outline'>
-                          {form.name.replace(/-/g, ' ')}
+                          {form.name.replaceAll('-', ' ')}
                         </Badge>
                       ))}
                     </div>
@@ -521,7 +521,7 @@ const PokemonDetailPage = () => {
                         <Card key={index}>
                           <Card.Content className='p-4'>
                             <Text as='p' className='capitalize'>
-                              {item.item.name.replace(/-/g, ' ')}
+                              {item.item.name.replaceAll('-', ' ')}
                             </Text>
                           </Card.Content>
                         </Card>
@@ -539,7 +539,7 @@ const PokemonDetailPage = () => {
                     <div className='flex flex-wrap gap-2'>
                       {pokemon.game_indices.map((game) => (
                         <Badge key={game.game_index} variant='outline'>
-                          {game.version.name.replace(/-/g, ' ')}
+                          {game.version.name.replaceAll('-', ' ')}
                         </Badge>
                       ))}
                     </div>
@@ -558,7 +558,7 @@ const PokemonDetailPage = () => {
                           <Text as='p' className='text-muted-foreground text-sm'>
                             Последний:
                           </Text>
-                          <audio controls className='w-full max-w-md'>
+                          <audio className='w-full max-w-md' controls>
                             <source src={pokemon.cries.latest} type='audio/ogg' />
                             Ваш браузер не поддерживает аудио элемент.
                           </audio>
@@ -569,7 +569,7 @@ const PokemonDetailPage = () => {
                           <Text as='p' className='text-muted-foreground text-sm'>
                             Устаревший:
                           </Text>
-                          <audio controls className='w-full max-w-md'>
+                          <audio className='w-full max-w-md' controls>
                             <source src={pokemon.cries.legacy} type='audio/ogg' />
                             Ваш браузер не поддерживает аудио элемент.
                           </audio>
@@ -619,7 +619,7 @@ const PokemonDetailPage = () => {
                           Скорость роста
                         </Text>
                         <Text as='p' className='text-lg font-semibold capitalize'>
-                          {speciesData.data.growth_rate.name.replace(/-/g, ' ')}
+                          {speciesData.data.growth_rate.name.replaceAll('-', ' ')}
                         </Text>
                       </div>
                     )}
@@ -631,7 +631,7 @@ const PokemonDetailPage = () => {
                         <div className='flex flex-wrap gap-2'>
                           {speciesData.data.egg_groups.map((group) => (
                             <Badge key={group.name} variant='outline'>
-                              {group.name.replace(/-/g, ' ')}
+                              {group.name.replaceAll('-', ' ')}
                             </Badge>
                           ))}
                         </div>
@@ -643,7 +643,7 @@ const PokemonDetailPage = () => {
                           Среда обитания:
                         </Text>
                         <Badge variant='outline'>
-                          {speciesData.data.habitat.name.replace(/-/g, ' ')}
+                          {speciesData.data.habitat.name.replaceAll('-', ' ')}
                         </Badge>
                       </div>
                     )}
@@ -653,7 +653,7 @@ const PokemonDetailPage = () => {
                           Цвет:
                         </Text>
                         <Badge variant='outline'>
-                          {speciesData.data.color.name.replace(/-/g, ' ')}
+                          {speciesData.data.color.name.replaceAll('-', ' ')}
                         </Badge>
                       </div>
                     )}
@@ -663,7 +663,7 @@ const PokemonDetailPage = () => {
                           Форма:
                         </Text>
                         <Badge variant='outline'>
-                          {speciesData.data.shape.name.replace(/-/g, ' ')}
+                          {speciesData.data.shape.name.replaceAll('-', ' ')}
                         </Badge>
                       </div>
                     )}
@@ -682,7 +682,8 @@ const PokemonDetailPage = () => {
                       <Card key={index}>
                         <Card.Content className='p-4'>
                           <Text as='h4' className='mb-2'>
-                            Поколение: {pastType.generation?.name.replace(/-/g, ' ').toUpperCase()}
+                            Поколение:{' '}
+                            {pastType.generation?.name.replaceAll('-', ' ').toUpperCase()}
                           </Text>
                           <div className='flex flex-wrap gap-2'>
                             {pastType.types
@@ -715,21 +716,21 @@ const PokemonDetailPage = () => {
                         <Card.Content className='p-4'>
                           <Text as='h4' className='mb-2'>
                             Поколение:{' '}
-                            {pastAbility.generation?.name.replace(/-/g, ' ').toUpperCase()}
+                            {pastAbility.generation?.name.replaceAll('-', ' ').toUpperCase()}
                           </Text>
                           <div className='space-y-2'>
                             {pastAbility.abilities
                               .filter((ability) => ability?.ability && ability.ability.name)
                               .map((ability, abilityIndex) => (
                                 <div
-                                  key={ability.ability.name || `ability-${abilityIndex}`}
                                   className='flex items-center justify-between'
+                                  key={ability.ability.name || `ability-${abilityIndex}`}
                                 >
                                   <Text as='p' className='font-semibold capitalize'>
                                     {formatAbilityName(ability.ability.name)}
                                   </Text>
                                   {ability.is_hidden && (
-                                    <Badge variant='surface' size='sm'>
+                                    <Badge size='sm' variant='surface'>
                                       Скрытая
                                     </Badge>
                                   )}

@@ -18,6 +18,7 @@ const textVariants = cva('font-head', {
       h6: 'text-base font-normal',
       li: 'font-sans text-base',
       p: 'font-sans text-base',
+      span: 'font-sans text-base',
     },
   },
 });

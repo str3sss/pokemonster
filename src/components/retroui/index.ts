@@ -12,7 +12,7 @@ export { buttonVariants } from './button';
 
 export { Card } from './card';
 
-export { Carousel } from './Carousel';
+export { Carousel } from './carousel';
 
 // Charts
 export { AreaChart } from './charts/area-chart';

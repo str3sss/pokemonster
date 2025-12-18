@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 
 import { Alert } from '@/components/retroui/alert';
@@ -22,7 +21,7 @@ const LocationsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [offset, setOffset] = useState(0);
 
-  const { data, isLoading, isError } = useApiV2LocationList({
+  const { data, isError, isLoading } = useApiV2LocationList({
     limit: LOCATIONS_PER_PAGE,
     offset,
   });
@@ -142,7 +141,7 @@ const LocationsPage = () => {
                             <Badge variant='outline'>#{locationId.padStart(3, '0')}</Badge>
                           </Table.Cell>
                           <Table.Cell className='font-semibold capitalize'>
-                            {location.name.replace(/-/g, ' ')}
+                            {location.name.replaceAll('-', ' ')}
                           </Table.Cell>
                         </Table.Row>
                       );

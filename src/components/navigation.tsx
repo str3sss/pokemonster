@@ -1,8 +1,8 @@
 'use client';
 
+import { ChevronDown, Coffee, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDown, Coffee, Heart } from 'lucide-react';
 
 import { Button } from '@/components/retroui/button';
 import { Text } from '@/components/retroui/text';
@@ -29,7 +29,7 @@ const Navigation = () => {
           <div className='flex-1 overflow-hidden'>
             <div className='animate-marquee flex items-center gap-8 whitespace-nowrap'>
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className='flex items-center gap-1'>
+                <div className='flex items-center gap-1' key={i}>
                   <Heart className='h-3 w-3 shrink-0 fill-pink-500 text-pink-500' />
                   <Text as='span' className='text-xs font-medium text-white'>
                     Подпишитесь на рассылку
@@ -66,7 +66,6 @@ const Navigation = () => {
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (
                   <Link
-                    key={item.href}
                     className={cn(
                       'text-sm font-medium transition-colors',
                       isActive
@@ -74,6 +73,7 @@ const Navigation = () => {
                         : 'text-muted-foreground hover:text-foreground',
                     )}
                     href={item.href}
+                    key={item.href}
                   >
                     {item.label}
                   </Link>

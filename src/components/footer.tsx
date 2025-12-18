@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { Globe, Instagram, Linkedin, MessageCircle, Twitter } from 'lucide-react';
+import Link from 'next/link';
 
 import { Text } from '@/components/retroui/text';
 
@@ -33,11 +33,11 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: MessageCircle, href: '#', label: 'Message' },
-    { icon: Globe, href: '#', label: 'Website' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
+    { href: '#', icon: MessageCircle, label: 'Message' },
+    { href: '#', icon: Globe, label: 'Website' },
+    { href: '#', icon: Linkedin, label: 'LinkedIn' },
+    { href: '#', icon: Instagram, label: 'Instagram' },
+    { href: '#', icon: Twitter, label: 'Twitter' },
   ];
 
   return (
@@ -67,10 +67,10 @@ const Footer = () => {
                 const Icon = social.icon;
                 return (
                   <a
-                    key={social.label}
                     aria-label={social.label}
                     className='hover:text-primary transition-colors'
                     href={social.href}
+                    key={social.label}
                   >
                     <Icon className='h-5 w-5' />
                   </a>

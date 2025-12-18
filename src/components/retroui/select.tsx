@@ -18,9 +18,9 @@ const SelectTrigger = ({ children, className, ...props }: SelectPrimitive.Select
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon
-        render={<ChevronDown className='ml-2 h-4 w-4' />}
-      ></SelectPrimitive.Icon>
+      <SelectPrimitive.Icon>
+        <ChevronDown className='ml-2 h-4 w-4' />
+      </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
 };

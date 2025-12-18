@@ -1,8 +1,8 @@
 'use client';
 
+import { Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
 import { useState } from 'react';
 
 import { Alert } from '@/components/retroui/alert';
@@ -24,10 +24,10 @@ const PokemonListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [offset, setOffset] = useState(0);
 
-  const { data, isLoading, isError } = useApiV2PokemonList({
-    q: searchQuery || undefined,
+  const { data, isError, isLoading } = useApiV2PokemonList({
     limit: POKEMON_PER_PAGE,
     offset,
+    q: searchQuery || undefined,
   });
 
   const pokemonList = data?.data?.results || [];
@@ -181,7 +181,7 @@ const PokemonListPage = () => {
                             >
                               {pokemon.name}
                             </Text>
-                            <Badge variant='outline' size='sm'>
+                            <Badge size='sm' variant='outline'>
                               #{pokemonId.padStart(3, '0')}
                             </Badge>
                           </Card.Content>
@@ -219,8 +219,8 @@ const PokemonListPage = () => {
 
                           return (
                             <Button
-                              key={pageNum}
                               className={isActive ? 'bg-primary-hover' : ''}
+                              key={pageNum}
                               onClick={() => setOffset((pageNum - 1) * POKEMON_PER_PAGE)}
                               size='sm'
                               variant={isActive ? 'default' : 'outline'}

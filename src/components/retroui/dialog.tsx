@@ -160,11 +160,15 @@ const dialogHeaderVariants = cva('flex items-center justify-between border-b-2 p
   },
 });
 
+const DialogClose = ReactDialog.Close;
+
 const DialogHeaderDefaultLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       {children}
-      <DialogTrigger className='cursor-pointer' render={<X />} title='Close pop-up'></DialogTrigger>
+      <DialogClose className='cursor-pointer' title='Close pop-up'>
+        <X />
+      </DialogClose>
     </>
   );
 };
@@ -191,6 +195,7 @@ const DialogHeader = ({
 };
 
 const DialogComponent = Object.assign(Dialog, {
+  Close: DialogClose,
   Content: DialogContent,
   Description: DialogDescription,
   Footer: DialogFooter,

@@ -1,8 +1,8 @@
 'use client';
 
+import { ArrowRight, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Sparkles } from 'lucide-react';
 
 import { Badge } from '@/components/retroui/badge';
 import { Button } from '@/components/retroui/button';
@@ -38,51 +38,24 @@ const Page = () => {
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
   };
 
-  /**
-   * Gets type color class
-   */
-  const getTypeColor = (typeName: string): string => {
-    const typeColors: Record<string, string> = {
-      normal: 'bg-gray-300 text-gray-800',
-      fire: 'bg-red-400 text-red-900',
-      water: 'bg-blue-400 text-blue-900',
-      electric: 'bg-yellow-400 text-yellow-900',
-      grass: 'bg-green-400 text-green-900',
-      ice: 'bg-cyan-300 text-cyan-900',
-      fighting: 'bg-orange-600 text-orange-100',
-      poison: 'bg-purple-400 text-purple-900',
-      ground: 'bg-amber-600 text-amber-100',
-      flying: 'bg-indigo-300 text-indigo-900',
-      psychic: 'bg-pink-400 text-pink-900',
-      bug: 'bg-lime-400 text-lime-900',
-      rock: 'bg-stone-500 text-stone-100',
-      ghost: 'bg-violet-500 text-violet-100',
-      dragon: 'bg-indigo-600 text-indigo-100',
-      dark: 'bg-gray-700 text-gray-100',
-      steel: 'bg-slate-400 text-slate-900',
-      fairy: 'bg-rose-300 text-rose-900',
-    };
-    return typeColors[typeName.toLowerCase()] || 'bg-gray-200 text-gray-800';
-  };
-
   const quickLinks = [
     {
-      href: '/pokemon',
-      title: 'Покемоны',
       description: 'Исследуйте коллекцию из более чем 1000 покемонов',
+      href: '/pokemon',
       icon: '⚡',
+      title: 'Покемоны',
     },
     {
-      href: '/berries',
-      title: 'Ягоды',
       description: 'Откройте для себя различные виды ягод и их свойства',
+      href: '/berries',
       icon: '🍓',
+      title: 'Ягоды',
     },
     {
-      href: '/locations',
-      title: 'Локации',
       description: 'Изучите города и регионы мира покемонов',
+      href: '/locations',
       icon: '🗺️',
+      title: 'Локации',
     },
   ];
 
@@ -189,7 +162,7 @@ const Page = () => {
                         <Text as='h3' className='mb-1 text-center text-sm font-semibold capitalize'>
                           {pokemon.name}
                         </Text>
-                        <Badge variant='outline' size='sm'>
+                        <Badge size='sm' variant='outline'>
                           #{pokemonId.padStart(3, '0')}
                         </Badge>
                       </Card.Content>

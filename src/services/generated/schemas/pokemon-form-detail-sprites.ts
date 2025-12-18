@@ -22,6 +22,6 @@ Created by [**Paul Hallett**](https://github.com/phalt) and other [**PokéAPI co
  */
 
 export type PokemonFormDetailSprites = {
-  [key: string]: null | string;
-  readonly default?: string;
+  [key: string]: null | string | undefined;
+  readonly default?: string | null;
 };

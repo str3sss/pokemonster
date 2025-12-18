@@ -1,12 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 
 import { Alert } from '@/components/retroui/alert';
 import { Badge } from '@/components/retroui/badge';
 import { Button } from '@/components/retroui/button';
-import { Card } from '@/components/retroui/card';
 import { Input } from '@/components/retroui/input';
 import { Loader } from '@/components/retroui/loader';
 import { Table } from '@/components/retroui/table';
@@ -23,7 +21,7 @@ const BerriesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [offset, setOffset] = useState(0);
 
-  const { data, isLoading, isError } = useApiV2BerryList({
+  const { data, isError, isLoading } = useApiV2BerryList({
     limit: BERRIES_PER_PAGE,
     offset,
   });
@@ -143,7 +141,7 @@ const BerriesPage = () => {
                             <Badge variant='outline'>#{berryId.padStart(3, '0')}</Badge>
                           </Table.Cell>
                           <Table.Cell className='font-semibold capitalize'>
-                            {berry.name.replace(/-/g, ' ')}
+                            {berry.name.replaceAll('-', ' ')}
                           </Table.Cell>
                         </Table.Row>
                       );

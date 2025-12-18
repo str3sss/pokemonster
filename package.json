@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "format": "prettier . --write",
     "generate-api": "orval --config ./orval.config.ts",
     "generate-hooks": "node scripts/generate-hooks.mjs",
