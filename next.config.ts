@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
   },
   /* config options here */
   reactCompiler: true,
+  async rewrites() {
+    return [
+      {
+        destination: 'https://pokeapi.co/api/:path*',
+        source: '/api/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -16,7 +16,14 @@ const eslintConfig = defineConfig([
   sonarjs.configs.recommended,
   ...pluginQuery.configs['flat/recommended'],
   {
-    ignores: ['node_modules', 'dist', 'storybook-static', '.next', 'public'],
+    ignores: [
+      'node_modules',
+      'dist',
+      'storybook-static',
+      '.next',
+      'public',
+      'src/services/generated/**',
+    ],
     rules: {
       '@tanstack/query/exhaustive-deps': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
@@ -83,6 +90,7 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
+    'src/services/generated/**',
   ]),
 ]);
 
