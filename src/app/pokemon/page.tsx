@@ -3,7 +3,7 @@
 import { Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Alert } from '@/components/retroui/alert';
 import { Badge } from '@/components/retroui/badge';
@@ -24,19 +24,37 @@ const PokemonListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [offset, setOffset] = useState(0);
 
-  const { data, isError, isLoading } = useApiV2PokemonList({
-    limit: POKEMON_PER_PAGE,
-    offset,
-    q: searchQuery || undefined,
+  // Load all pokemon once for client-side search
+  const {
+    data: allPokemonData,
+    isError,
+    isLoading,
+  } = useApiV2PokemonList({
+    limit: 100_000,
+    offset: 0,
   });
 
-  const pokemonList = data?.data?.results || [];
-  const totalCount = data?.data?.count || 0;
-  const hasNext = !!data?.data?.next;
-  const hasPrevious = !!data?.data?.previous;
+  const allPokemonList = allPokemonData?.data?.results || [];
+  const totalCount = allPokemonData?.data?.count || 0;
+
+  /**
+   * Filters pokemon by search query (client-side lazy search)
+   */
+  const filteredPokemon = useMemo(() => {
+    if (!searchQuery) {
+      // When not searching, return paginated results
+      return allPokemonList.slice(offset, offset + POKEMON_PER_PAGE);
+    }
+    // When searching, filter all pokemon and return all matches
+    return allPokemonList.filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [allPokemonList, searchQuery, offset]);
 
   const totalPages = Math.ceil(totalCount / POKEMON_PER_PAGE);
   const currentPage = Math.floor(offset / POKEMON_PER_PAGE) + 1;
+  const hasNext = offset + POKEMON_PER_PAGE < totalCount;
+  const hasPrevious = offset > 0;
 
   /**
    * Extracts Pokemon ID from URL
@@ -126,7 +144,7 @@ const PokemonListPage = () => {
           </div>
         ) : (
           <>
-            {pokemonList.length === 0 ? (
+            {filteredPokemon.length === 0 ? (
               <div className='mx-auto max-w-md'>
                 <Alert status='info'>
                   <Alert.Title>Покемоны не найдены</Alert.Title>
@@ -139,13 +157,9 @@ const PokemonListPage = () => {
                 <div className='mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row'>
                   <div>
                     <Text as='p' className='font-head text-lg font-semibold'>
-                      Найдено покемонов: {totalCount}
+                      Найдено покемонов: {filteredPokemon.length}
+                      {searchQuery && ` по запросу "${searchQuery}"`}
                     </Text>
-                    {searchQuery && (
-                      <Text as='p' className='text-muted-foreground text-sm'>
-                        По запросу &quot;{searchQuery}&quot;
-                      </Text>
-                    )}
                   </div>
                   {!searchQuery && (
                     <Text as='p' className='text-muted-foreground text-sm'>
@@ -156,7 +170,7 @@ const PokemonListPage = () => {
 
                 {/* Pokemon Grid */}
                 <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'>
-                  {pokemonList.map((pokemon) => {
+                  {filteredPokemon.map((pokemon) => {
                     const pokemonId = getPokemonId(pokemon.url);
                     const imageUrl = getPokemonImageUrl(pokemonId);
 
