@@ -1,25 +1,21 @@
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
-  pokemon: {
-    input: './api/openapi.yml',
+import { defineConfig } from 'orval';
 
+export default defineConfig({
+  pokemon: {
+    input: {
+      target: './services/openapi.yml',
+      filters: {
+        mode: 'exclude',
+        tags: ['evolution', 'berries', 'items', 'machines', 'location', 'contest', 'moves', 'encounters', 'games'],
+      },
+    },
     output: {
+      httpClient: 'fetch',
       mode: 'tags-split',
-      target: 'src/shared/api/generated',
-      schemas: 'src/shared/api/models',
+      // mock: true,
+      target: 'src/services/generated/target',
+      schemas: 'src/shared/generated/schemas',
       client: 'react-query',
-      mock: false,
-      // override: {
-      //   mutator: {
-      //     path: './src/shared/api/mutator.ts',
-      //     name: 'customInstance',
-      //   },
-      //   query: {
-      //     useQuery: true,
-      //     useInfinite: false,
-      //     useInfiniteQueryParam: 'offset',
-      //   },
-      // },
     },
   },
-};
+});
