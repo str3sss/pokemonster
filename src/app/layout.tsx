@@ -2,6 +2,8 @@ import { Archivo_Black, Space_Grotesk } from 'next/font/google';
 
 import './globals.css';
 
+import { Footer } from '@/components/footer';
+import { Navigation } from '@/components/navigation';
 import { QueryProvider } from '@/components/providers/query-provider';
 
 import type { Metadata } from 'next';
@@ -33,7 +35,13 @@ const RootLayout = ({
   return (
     <html lang='en'>
       <body className={`${archivoBlack.variable} ${space.variable}`}>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <div className='flex min-h-screen flex-col'>
+            <Navigation />
+            <main className='flex-1'>{children}</main>
+            <Footer />
+          </div>
+        </QueryProvider>
       </body>
     </html>
   );

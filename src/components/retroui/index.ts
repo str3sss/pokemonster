@@ -12,6 +12,8 @@ export { buttonVariants } from './button';
 
 export { Card } from './card';
 
+export { Carousel } from './Carousel';
+
 // Charts
 export { AreaChart } from './charts/area-chart';
 

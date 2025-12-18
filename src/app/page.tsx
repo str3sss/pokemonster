@@ -1,172 +1,246 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
+import { Badge } from '@/components/retroui/badge';
+import { Button } from '@/components/retroui/button';
 import { Card } from '@/components/retroui/card';
+import { Loader } from '@/components/retroui/loader';
 import { Text } from '@/components/retroui/text';
-import { useApiV2PokemonRetrieve } from '@/services/generated/pokemon';
+import { useApiV2PokemonList } from '@/services/generated/pokemon';
 
 /**
- * Main page component displaying Pokemon information
- * Fetches and displays data for Pokemon with ID 25 (Pikachu)
+ * Main page component
+ * Displays hero section, featured Pokemon, and quick links
  */
 const Page = () => {
-  const { data, isError, isLoading } = useApiV2PokemonRetrieve('25');
+  const { data: pokemonData, isLoading } = useApiV2PokemonList({
+    limit: 6,
+    offset: 0,
+  });
 
-  if (isLoading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <Text as='p' className='text-xl'>
-          Загрузка...
-        </Text>
-      </div>
-    );
-  }
+  const featuredPokemon = pokemonData?.data?.results || [];
 
-  if (isError || !data?.data) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <Text as='p' className='text-xl text-red-500'>
-          Ошибка загрузки данных о покемоне
-        </Text>
-      </div>
-    );
-  }
+  /**
+   * Extracts Pokemon ID from URL
+   */
+  const getPokemonId = (url: string): string => {
+    const matches = url.match(/\/(\d+)\//);
+    return matches ? matches[1] : '';
+  };
 
-  const pokemon = data.data;
+  /**
+   * Gets Pokemon image URL
+   */
+  const getPokemonImageUrl = (id: string): string => {
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  };
+
+  /**
+   * Gets type color class
+   */
+  const getTypeColor = (typeName: string): string => {
+    const typeColors: Record<string, string> = {
+      normal: 'bg-gray-300 text-gray-800',
+      fire: 'bg-red-400 text-red-900',
+      water: 'bg-blue-400 text-blue-900',
+      electric: 'bg-yellow-400 text-yellow-900',
+      grass: 'bg-green-400 text-green-900',
+      ice: 'bg-cyan-300 text-cyan-900',
+      fighting: 'bg-orange-600 text-orange-100',
+      poison: 'bg-purple-400 text-purple-900',
+      ground: 'bg-amber-600 text-amber-100',
+      flying: 'bg-indigo-300 text-indigo-900',
+      psychic: 'bg-pink-400 text-pink-900',
+      bug: 'bg-lime-400 text-lime-900',
+      rock: 'bg-stone-500 text-stone-100',
+      ghost: 'bg-violet-500 text-violet-100',
+      dragon: 'bg-indigo-600 text-indigo-100',
+      dark: 'bg-gray-700 text-gray-100',
+      steel: 'bg-slate-400 text-slate-900',
+      fairy: 'bg-rose-300 text-rose-900',
+    };
+    return typeColors[typeName.toLowerCase()] || 'bg-gray-200 text-gray-800';
+  };
+
+  const quickLinks = [
+    {
+      href: '/pokemon',
+      title: 'Покемоны',
+      description: 'Исследуйте коллекцию из более чем 1000 покемонов',
+      icon: '⚡',
+    },
+    {
+      href: '/berries',
+      title: 'Ягоды',
+      description: 'Откройте для себя различные виды ягод и их свойства',
+      icon: '🍓',
+    },
+    {
+      href: '/locations',
+      title: 'Локации',
+      description: 'Изучите города и регионы мира покемонов',
+      icon: '🗺️',
+    },
+  ];
 
   return (
-    <div className='container mx-auto min-h-screen p-8'>
-      <div className='mx-auto max-w-4xl'>
-        <Card className='shadow-lg'>
-          <Card.Content className='flex flex-col gap-6 md:flex-row'>
-            {/* Pokemon Image */}
-            <div className='shrink-0'>
-              {pokemon.sprites.front_default ? (
-                <Image
-                  alt={pokemon.name}
-                  className='h-auto w-full max-w-[300px]'
-                  height={300}
-                  src={pokemon.sprites.front_default}
-                  width={300}
-                />
-              ) : (
-                <div className='flex h-[300px] w-[300px] items-center justify-center bg-gray-200'>
-                  <Text as='p'>Нет изображения</Text>
-                </div>
-              )}
+    <div className='min-h-screen'>
+      {/* Hero Section */}
+      <section className='bg-primary border-b-2 border-black'>
+        <div className='container mx-auto px-4 py-16 md:py-24'>
+          <div className='mx-auto max-w-3xl text-center'>
+            <div className='mb-6 flex items-center justify-center gap-2'>
+              <Sparkles className='h-8 w-8' />
+              <Text as='h1' className='font-head text-4xl font-bold md:text-6xl'>
+                Добро пожаловать в Pokemonster
+              </Text>
+              <Sparkles className='h-8 w-8' />
             </div>
-
-            {/* Pokemon Info */}
-            <div className='flex-1 space-y-4'>
-              <div>
-                <Text as='h1' className='mb-2 capitalize'>
-                  {pokemon.name}
-                </Text>
-                <Text as='p' className='text-muted-foreground'>
-                  #{String(pokemon.id).padStart(3, '0')}
-                </Text>
-              </div>
-
-              {/* Types */}
-              <div>
-                <Text as='h3' className='mb-2'>
-                  Типы:
-                </Text>
-                <div className='flex flex-wrap gap-2'>
-                  {pokemon.types.map((type) => (
-                    <span
-                      className='rounded bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 capitalize'
-                      key={type.type.name}
-                    >
-                      {type.type.name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div>
-                <Text as='h3' className='mb-2'>
-                  Характеристики:
-                </Text>
-                <div className='space-y-2'>
-                  {pokemon.stats.map((stat) => (
-                    <div className='flex items-center gap-2' key={stat.stat.name}>
-                      <Text as='p' className='w-32 capitalize'>
-                        {stat.stat.name.replace('-', ' ')}:
-                      </Text>
-                      <div className='flex-1'>
-                        <div className='h-4 w-full overflow-hidden rounded-full bg-gray-200'>
-                          <div
-                            className='h-full bg-green-500 transition-all'
-                            style={{ width: `${Math.min((stat.base_stat / 150) * 100, 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                      <Text as='p' className='w-12 text-right font-semibold'>
-                        {stat.base_stat}
-                      </Text>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Abilities */}
-              <div>
-                <Text as='h3' className='mb-2'>
-                  Способности:
-                </Text>
-                <div className='flex flex-wrap gap-2'>
-                  {pokemon.abilities.map((ability) => (
-                    <span
-                      className='rounded bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800 capitalize'
-                      key={ability.ability.name}
-                    >
-                      {ability.ability.name.replace('-', ' ')}
-                      {ability.is_hidden && ' (скрытая)'}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Additional Info */}
-              <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
-                {pokemon.height && (
-                  <div>
-                    <Text as='p' className='text-muted-foreground text-sm'>
-                      Рост
-                    </Text>
-                    <Text as='p' className='text-lg font-semibold'>
-                      {pokemon.height / 10} м
-                    </Text>
-                  </div>
-                )}
-                {pokemon.weight && (
-                  <div>
-                    <Text as='p' className='text-muted-foreground text-sm'>
-                      Вес
-                    </Text>
-                    <Text as='p' className='text-lg font-semibold'>
-                      {pokemon.weight / 10} кг
-                    </Text>
-                  </div>
-                )}
-                {pokemon.base_experience && (
-                  <div>
-                    <Text as='p' className='text-muted-foreground text-sm'>
-                      Базовый опыт
-                    </Text>
-                    <Text as='p' className='text-lg font-semibold'>
-                      {pokemon.base_experience}
-                    </Text>
-                  </div>
-                )}
-              </div>
+            <Text as='p' className='text-muted-foreground mb-8 text-lg md:text-xl'>
+              Ваш путеводитель по миру покемонов. Исследуйте покемонов, ягоды, локации и многое
+              другое!
+            </Text>
+            <div className='flex flex-wrap items-center justify-center gap-4'>
+              <Button asChild size='lg'>
+                <Link href='/pokemon'>
+                  Начать исследование
+                  <ArrowRight className='ml-2 h-4 w-4' />
+                </Link>
+              </Button>
+              <Button asChild size='lg' variant='outline'>
+                <Link href='/berries'>Узнать больше</Link>
+              </Button>
             </div>
-          </Card.Content>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Links Section */}
+      <section className='bg-background border-b-2 border-black py-12'>
+        <div className='container mx-auto px-4'>
+          <Text as='h2' className='font-head mb-8 text-center text-3xl font-bold'>
+            Быстрый доступ
+          </Text>
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+            {quickLinks.map((link) => (
+              <Link href={link.href} key={link.href}>
+                <Card className='h-full cursor-pointer transition-all hover:shadow-lg'>
+                  <Card.Content className='flex flex-col items-center p-6 text-center'>
+                    <Text as='span' className='mb-4 text-5xl'>
+                      {link.icon}
+                    </Text>
+                    <Text as='h3' className='font-head mb-2 text-xl font-bold'>
+                      {link.title}
+                    </Text>
+                    <Text as='p' className='text-muted-foreground text-sm'>
+                      {link.description}
+                    </Text>
+                  </Card.Content>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Pokemon Section */}
+      <section className='bg-background border-b-2 border-black py-12'>
+        <div className='container mx-auto px-4'>
+          <div className='mb-8 flex items-center justify-between'>
+            <Text as='h2' className='font-head text-3xl font-bold'>
+              Популярные покемоны
+            </Text>
+            <Button asChild variant='outline'>
+              <Link href='/pokemon'>
+                Смотреть все
+                <ArrowRight className='ml-2 h-4 w-4' />
+              </Link>
+            </Button>
+          </div>
+
+          {isLoading ? (
+            <div className='flex items-center justify-center py-12'>
+              <Loader size='lg' />
+            </div>
+          ) : (
+            <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6'>
+              {featuredPokemon.map((pokemon) => {
+                const pokemonId = getPokemonId(pokemon.url);
+                const imageUrl = getPokemonImageUrl(pokemonId);
+
+                return (
+                  <Link href={`/pokemon/${pokemonId}`} key={pokemon.name}>
+                    <Card className='cursor-pointer transition-all hover:shadow-lg'>
+                      <Card.Content className='flex flex-col items-center p-4'>
+                        {pokemonId && (
+                          <div className='mb-2'>
+                            <Image
+                              alt={pokemon.name}
+                              className='h-auto w-full'
+                              height={96}
+                              src={imageUrl}
+                              width={96}
+                            />
+                          </div>
+                        )}
+                        <Text as='h3' className='mb-1 text-center text-sm font-semibold capitalize'>
+                          {pokemon.name}
+                        </Text>
+                        <Badge variant='outline' size='sm'>
+                          #{pokemonId.padStart(3, '0')}
+                        </Badge>
+                      </Card.Content>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className='bg-accent border-b-2 border-black py-12'>
+        <div className='container mx-auto px-4'>
+          <div className='grid grid-cols-2 gap-8 md:grid-cols-4'>
+            <div className='text-center'>
+              <Text as='p' className='font-head mb-2 text-4xl font-bold'>
+                1000+
+              </Text>
+              <Text as='p' className='text-muted-foreground text-sm'>
+                Покемонов
+              </Text>
+            </div>
+            <div className='text-center'>
+              <Text as='p' className='font-head mb-2 text-4xl font-bold'>
+                64
+              </Text>
+              <Text as='p' className='text-muted-foreground text-sm'>
+                Ягод
+              </Text>
+            </div>
+            <div className='text-center'>
+              <Text as='p' className='font-head mb-2 text-4xl font-bold'>
+                800+
+              </Text>
+              <Text as='p' className='text-muted-foreground text-sm'>
+                Локаций
+              </Text>
+            </div>
+            <div className='text-center'>
+              <Text as='p' className='font-head mb-2 text-4xl font-bold'>
+                18
+              </Text>
+              <Text as='p' className='text-muted-foreground text-sm'>
+                Типов
+              </Text>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
